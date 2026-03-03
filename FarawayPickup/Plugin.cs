@@ -4,6 +4,7 @@ using BepInEx.Logging;
 using System.Linq;
 using System.Reflection;
 using System;
+using System.Text;
 
 namespace FarawayPickup;
 
@@ -37,27 +38,54 @@ public class Plugin : BaseUnityPlugin
         }
     }
 
-    [HarmonyPatch(typeof(DropItem))]
-    [HarmonyPatch("Update")]
-    class Patch_DropItem_Update
-    {
-        static void Prefix(DropItem __instance)
-        {
-            __instance.IsNeedGroundToFlyToPlayer = false;
-        }
-    }
+    // static string DebugMonoBehaviour(UnityEngine.MonoBehaviour mb)
+    // {
+    //     var str = new StringBuilder();
+    //     str.AppendLine("Type: " + mb.GetType().FullName);
+    //     str.AppendLine("GameObject: " + mb.gameObject.name);
+    //     str.AppendLine("Tag: " + mb.gameObject.tag);
+    //     str.AppendLine("Layer: " + mb.gameObject.layer);
+
+    //     var components = mb.GetComponents<UnityEngine.Component>();
+    //     str.AppendLine("Components:");
+
+    //     foreach (var comp in components)
+    //     {
+    //         str.AppendLine(" - " + comp.GetType().FullName);
+    //     }
+
+    //     return str.ToString();
+    // }
 
     [HarmonyPatch(typeof(DropItem))]
-    [HarmonyPatch("UpdateForceFly")]
-    class Patch_DropItem_UpdateForceFly
+    class Patch_DropItem
     {
         private static readonly AccessTools.FieldRef<DropItem, float> _forceFlyToPlayerCounter =
             AccessTools.FieldRefAccess<DropItem, float>("_forceFlyToPlayerCounter");
 
-        static void Prefix(DropItem __instance)
+        [HarmonyPatch("Update")]
+        [HarmonyPrefix]
+        static void Update_Prefix(DropItem __instance)
         {
-            __instance.ForceFlyToPlayerAfterTime = 1f;
-            _forceFlyToPlayerCounter(__instance) = 2f;
+            // DropPickable includes stuff like the Data/Lore Terminals
+            if (!__instance.TryGetComponent<DropPickable>(out var _))
+                __instance.IsNeedGroundToFlyToPlayer = false;
+        }
+
+        [HarmonyPatch("UpdateForceFly")]
+        [HarmonyPrefix]
+        static void UpdateForceFly_Prefix(DropItem __instance)
+        {
+            if (!__instance.TryGetComponent<DropPickable>(out var _))
+            {
+                __instance.ForceFlyToPlayerAfterTime = 1f;
+                _forceFlyToPlayerCounter(__instance) = 2f;
+
+                // Unfortunately, couldn't find a way to check for BepInEx debug level.
+                // Ideally LogDebug would take a callback and run it only when
+                // the level is set to get the log string.
+                // Logger.LogDebug($"ForceFly: \n{DebugMonoBehaviour(__instance)}");
+            }
         }
     }
 }
