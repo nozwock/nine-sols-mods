@@ -12,7 +12,7 @@ public class PluginInfo
 {
     public const string PLUGIN_GUID = "nozwock.FarawayPickup";
     public const string PLUGIN_NAME = "Faraway Pickup";
-    public const string PLUGIN_VERSION = "1.0.0";
+    public const string PLUGIN_VERSION = "1.0.1";
 }
 
 
