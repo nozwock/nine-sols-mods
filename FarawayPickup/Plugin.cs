@@ -20,14 +20,19 @@ public class PluginInfo
 public class Plugin : BaseUnityPlugin
 {
     internal static new ManualLogSource Logger;
+    static Harmony harmony;
 
-    private void Awake()
+    void Awake()
     {
         Logger = base.Logger;
 
+        // NOTE: The game will prematurely remove the plugin otherwise
+        // Picked up from https://github.com/Ixrec/NineSolsTeleportFromAnywhere/blob/main/Source/TeleportFromAnywhere.cs
+        RCGLifeCycle.DontDestroyForever(gameObject);
+
         Logger.LogInfo($"Plugin {PluginInfo.PLUGIN_GUID} is loaded!");
 
-        var harmony = Harmony.CreateAndPatchAll(Assembly.GetExecutingAssembly(), PluginInfo.PLUGIN_GUID);
+        harmony = Harmony.CreateAndPatchAll(Assembly.GetExecutingAssembly(), PluginInfo.PLUGIN_GUID);
         foreach (var method in harmony.GetPatchedMethods())
         {
             Logger.LogInfo($"Patched method: {method.DeclaringType?.FullName}.{method.Name}");
@@ -36,6 +41,12 @@ public class Plugin : BaseUnityPlugin
         {
             Logger.LogError("Failed to apply Harmony patches.");
         }
+    }
+
+    void OnDestroy()
+    {
+        Logger.LogInfo($"Unloading plugin {PluginInfo.PLUGIN_GUID}");
+        harmony?.UnpatchSelf();
     }
 
     // static string DebugMonoBehaviour(UnityEngine.MonoBehaviour mb)
