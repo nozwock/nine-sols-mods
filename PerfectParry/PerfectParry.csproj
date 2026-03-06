@@ -1,5 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <AssemblyName>PerfectParry</AssemblyName>
+    <BepInExPluginGuid>nozwock.PerfectParry</BepInExPluginGuid>
+    <Product>Perfect Parry</Product>
+    <Version>1.0.0</Version>
   </PropertyGroup>
 </Project>

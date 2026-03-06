@@ -8,15 +8,7 @@ using System.Text;
 
 namespace FarawayPickup;
 
-public class PluginInfo
-{
-    public const string PLUGIN_GUID = "nozwock.FarawayPickup";
-    public const string PLUGIN_NAME = "Faraway Pickup";
-    public const string PLUGIN_VERSION = "1.0.1";
-}
-
-
-[BepInPlugin(PluginInfo.PLUGIN_GUID, PluginInfo.PLUGIN_NAME, PluginInfo.PLUGIN_VERSION)]
+[BepInPlugin(MyPluginInfo.PLUGIN_GUID, MyPluginInfo.PLUGIN_NAME, MyPluginInfo.PLUGIN_VERSION)]
 public class Plugin : BaseUnityPlugin
 {
     internal static new ManualLogSource Logger;
@@ -30,9 +22,9 @@ public class Plugin : BaseUnityPlugin
         // Picked up from https://github.com/Ixrec/NineSolsTeleportFromAnywhere/blob/main/Source/TeleportFromAnywhere.cs
         RCGLifeCycle.DontDestroyForever(gameObject);
 
-        Logger.LogInfo($"Plugin {PluginInfo.PLUGIN_GUID} is loaded!");
+        Logger.LogInfo($"Plugin {MyPluginInfo.PLUGIN_GUID} is loaded!");
 
-        harmony = Harmony.CreateAndPatchAll(Assembly.GetExecutingAssembly(), PluginInfo.PLUGIN_GUID);
+        harmony = Harmony.CreateAndPatchAll(Assembly.GetExecutingAssembly(), MyPluginInfo.PLUGIN_GUID);
         foreach (var method in harmony.GetPatchedMethods())
         {
             Logger.LogInfo($"Patched method: {method.DeclaringType?.FullName}.{method.Name}");
@@ -45,7 +37,7 @@ public class Plugin : BaseUnityPlugin
 
     void OnDestroy()
     {
-        Logger.LogInfo($"Unloading plugin {PluginInfo.PLUGIN_GUID}");
+        Logger.LogInfo($"Unloading plugin {MyPluginInfo.PLUGIN_GUID}");
         harmony?.UnpatchSelf();
     }
 
