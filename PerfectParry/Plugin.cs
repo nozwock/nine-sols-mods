@@ -7,8 +7,8 @@ using System.Reflection;
 
 namespace PerfectParry;
 
-[BepInPlugin(MyPluginInfo.PLUGIN_GUID, MyPluginInfo.PLUGIN_NAME, MyPluginInfo.PLUGIN_VERSION)]
-public class Plugin : BaseUnityPlugin
+[BepInAutoPlugin(id: "nozwock.PerfectParry")]
+public partial class Plugin : BaseUnityPlugin
 {
     internal static new ManualLogSource Logger;
     static Harmony harmony;
@@ -19,9 +19,9 @@ public class Plugin : BaseUnityPlugin
 
         RCGLifeCycle.DontDestroyForever(gameObject);
 
-        Logger.LogInfo($"Plugin {MyPluginInfo.PLUGIN_GUID} is loaded!");
+        Logger.LogInfo($"Plugin {Id} is loaded!");
 
-        harmony = Harmony.CreateAndPatchAll(Assembly.GetExecutingAssembly(), MyPluginInfo.PLUGIN_GUID);
+        harmony = Harmony.CreateAndPatchAll(Assembly.GetExecutingAssembly(), Id);
         foreach (var method in harmony.GetPatchedMethods())
         {
             Logger.LogInfo($"Patched method: {method.DeclaringType?.FullName}.{method.Name}");
@@ -34,7 +34,7 @@ public class Plugin : BaseUnityPlugin
 
     void OnDestroy()
     {
-        Logger.LogInfo($"Unloading plugin {MyPluginInfo.PLUGIN_GUID}");
+        Logger.LogInfo($"Unloading plugin {Id}");
         harmony?.UnpatchSelf();
     }
 

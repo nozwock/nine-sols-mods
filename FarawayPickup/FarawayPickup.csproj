@@ -1,7 +1,6 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <BepInExPluginGuid>nozwock.FarawayPickup</BepInExPluginGuid>
-    <Product>Faraway Pickup</Product>
+    <AssemblyTitle>Faraway Pickup</AssemblyTitle>
     <Version>1.0.1</Version>
   </PropertyGroup>
 </Project>
