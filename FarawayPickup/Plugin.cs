@@ -63,14 +63,12 @@ public partial class Plugin : BaseUnityPlugin
     [HarmonyPatch(typeof(DropItem))]
     class Patch_DropItem
     {
-        private static readonly AccessTools.FieldRef<DropItem, float> _forceFlyToPlayerCounter =
-            AccessTools.FieldRefAccess<DropItem, float>("_forceFlyToPlayerCounter");
-
         [HarmonyPatch("Update")]
         [HarmonyPrefix]
         static void Update_Prefix(DropItem __instance)
         {
-            // DropPickable includes stuff like the Data/Lore Terminals
+            // DropPickable includes stuff from interactables like the data terminals to items that need a key press to
+            // pickup
             if (!__instance.TryGetComponent<DropPickable>(out var _))
                 __instance.IsNeedGroundToFlyToPlayer = false;
         }
@@ -82,7 +80,7 @@ public partial class Plugin : BaseUnityPlugin
             if (!__instance.TryGetComponent<DropPickable>(out var _))
             {
                 __instance.ForceFlyToPlayerAfterTime = 1f;
-                _forceFlyToPlayerCounter(__instance) = 2f;
+                __instance._forceFlyToPlayerCounter = 2f;
 
                 // Unfortunately, couldn't find a way to check for BepInEx debug level.
                 // Ideally LogDebug would take a callback and run it only when
