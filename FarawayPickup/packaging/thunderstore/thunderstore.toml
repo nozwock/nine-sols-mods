@@ -1,0 +1,27 @@
+[config]
+schemaVersion = "0.0.1"
+
+[package]
+namespace = "nozwock"
+name = "FarawayPickup"
+versionNumber = "1.0.1"
+description = "Pick up loot from far away"
+websiteUrl = "https://github.com/nozwock/nine-sols-mods"
+
+[package.dependencies]
+BepInEx-BepInExPack = "5.4.2304"
+
+[build]
+icon = "./icon.png"
+readme = "../../README.md"
+outdir = "./build"
+
+[[build.copy]]
+source = "./dist"
+target = ""
+
+[publish]
+communities = ["nine-sols"]
+
+[publish.categories]
+nine-sols = ["mods"]
