@@ -1,8 +1,11 @@
-build/
 /Local.props
 *.csproj.user
 \.env
 .vscode/
+
+# Thunderstore related, and in general build directories
+dist/
+build/
 
 ## A streamlined .gitignore for modern .NET projects
 ## including temporary files, build results, and
