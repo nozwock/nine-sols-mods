@@ -1,0 +1,67 @@
+name: Publish Thunderstore
+
+on:
+  push:
+    tags:
+      - "*/*"
+  workflow_dispatch:
+    inputs:
+      mod-name:
+        required: true
+        type: string
+
+jobs:
+  build-mod:
+    uses: ./.github/workflows/build-mod.yml
+    with:
+      mod-name: ${{ github.event.inputs.mod-name }}
+
+  publish:
+    runs-on: ubuntu-latest
+    needs: build-mod
+
+    defaults:
+      run:
+        shell: pwsh
+
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Check thunderstore package metadata
+        run: |
+          $mod_name = "${{ needs.build-mod.outputs.mod-name }}"
+
+          $thunderstore = "$mod_name/packaging/thunderstore"
+          $thunderstore_config = "$thunderstore/thunderstore.toml"
+
+          $skip = "false"
+          if (!(Test-Path $thunderstore_config)) {
+            echo "Thunderstore config not found: $thunderstore_config"
+            $skip = "true"
+          }
+
+          "thunderstore=$thunderstore" >> $env:GITHUB_ENV
+          "skip=$skip" >> $env:GITHUB_ENV
+
+      - uses: actions/download-artifact@v8
+        if: ${{ env.skip == 'false' }}
+        with:
+          name: publish-${{ needs.build-mod.outputs.mod-name }}
+
+      - name: Extract artifact
+        if: ${{ env.skip == 'false' }}
+        run: |
+          Expand-Archive publish.zip "$env:thunderstore/dist/"
+
+      - uses: actions/setup-dotnet@v5
+        if: ${{ env.skip == 'false' }}
+
+      - name: Install tcli
+        if: ${{ env.skip == 'false' }}
+        run: dotnet tool install -g tcli
+
+      - name: Publish
+        if: ${{ env.skip == 'false' }}
+        run: |
+          Push-Location "$env:thunderstore"
+          tcli publish --token ${{ secrets.TCLI_TOKEN }}
