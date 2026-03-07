@@ -63,7 +63,7 @@ public partial class Plugin : BaseUnityPlugin
     [HarmonyPatch(typeof(DropItem))]
     class Patch_DropItem
     {
-        [HarmonyPatch("Update")]
+        [HarmonyPatch(nameof(DropItem.Update))]
         [HarmonyPrefix]
         static void Update_Prefix(DropItem __instance)
         {
@@ -73,7 +73,7 @@ public partial class Plugin : BaseUnityPlugin
                 __instance.IsNeedGroundToFlyToPlayer = false;
         }
 
-        [HarmonyPatch("UpdateForceFly")]
+        [HarmonyPatch(nameof(DropItem.UpdateForceFly))]
         [HarmonyPrefix]
         static void UpdateForceFly_Prefix(DropItem __instance)
         {

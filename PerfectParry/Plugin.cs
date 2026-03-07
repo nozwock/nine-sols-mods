@@ -38,7 +38,7 @@ public partial class Plugin : BaseUnityPlugin
         harmony?.UnpatchSelf();
     }
 
-    [HarmonyPatch(typeof(PlayerParryState), "Parried")]
+    [HarmonyPatch(typeof(PlayerParryState), nameof(PlayerParryState.Parried))]
     class Patch_PlayerParryState_Parried
     {
         static void Prefix(PlayerParryState __instance)

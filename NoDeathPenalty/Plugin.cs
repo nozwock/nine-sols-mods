@@ -87,8 +87,7 @@ public partial class Plugin : BaseUnityPlugin
         }
     }
 
-    [HarmonyPatch(typeof(PlayerDeadRecord))]
-    [HarmonyPatch("StorePlayerDataBeforeDead")]
+    [HarmonyPatch(typeof(PlayerDeadRecord), nameof(PlayerDeadRecord.StorePlayerDataBeforeDead))]
     class Patch_PlayerDeadRecord_StorePlayerDataBeforeDead
     {
         static void Postfix(PlayerDeadRecord __instance)
