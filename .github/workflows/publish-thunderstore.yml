@@ -1,4 +1,5 @@
 name: Publish Thunderstore
+run-name: Publish Thunderstore ${{ github.ref_name }} ${{ inputs.mod-name }} [${{ github.event_name }}]
 
 on:
   push:
