@@ -53,6 +53,9 @@ public partial class Plugin : BaseUnityPlugin
     [HarmonyPatch]
     class Patch_PlayerGamePlayData_PlayerDeathPenalty
     {
+        public static bool patchedGold = false;
+        public static bool patchedExp = false;
+
         static MethodBase TargetMethod()
         {
             return GetAsyncMethod(typeof(PlayerGamePlayData), nameof(PlayerGamePlayData.PlayerDeathPenalty));
@@ -60,6 +63,9 @@ public partial class Plugin : BaseUnityPlugin
 
         static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions)
         {
+            patchedGold = false;
+            patchedExp = false;
+
             var codes = new List<CodeInstruction>(instructions);
             for (int i = 0; i < codes.Count; i++)
             {
@@ -73,6 +79,7 @@ public partial class Plugin : BaseUnityPlugin
                     codes[i].opcode = OpCodes.Nop;
                     codes[i + 1].opcode = OpCodes.Nop;
                     codes[i + 2].opcode = OpCodes.Nop;
+                    patchedGold = true;
                 }
                 if (codes[i].IsLdloc()
                     && codes[i + 1].LoadsConstant(0)
@@ -84,6 +91,7 @@ public partial class Plugin : BaseUnityPlugin
                     codes[i].opcode = OpCodes.Nop;
                     codes[i + 1].opcode = OpCodes.Nop;
                     codes[i + 2].opcode = OpCodes.Nop;
+                    patchedExp = true;
                 }
             }
             return codes.AsEnumerable();
@@ -95,8 +103,10 @@ public partial class Plugin : BaseUnityPlugin
     {
         static void Postfix(PlayerDeadRecord __instance)
         {
-            __instance.ContainEXP.CurrentValue = 0;
-            __instance.ContainMoney.CurrentValue = 0;
+            if (Patch_PlayerGamePlayData_PlayerDeathPenalty.patchedGold)
+                __instance.ContainMoney.CurrentValue = 0;
+            if (Patch_PlayerGamePlayData_PlayerDeathPenalty.patchedExp)
+                __instance.ContainEXP.CurrentValue = 0;
         }
     }
 }
