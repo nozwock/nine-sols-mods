@@ -32,7 +32,7 @@
     <PackageReference Include="Hamunii.BepInEx.AutoPlugin" Version="2.1" PrivateAssets="all"/>
 
     <!-- https://github.com/nozwock/NineSols.GameLibs -->
-    <PackageReference Include="NineSols.GameLibs" Version="*-*"  />
+    <PackageReference Include="NineSols.GameLibs" Version="*-*" />
   </ItemGroup>
 
   <ItemGroup Condition="'$(TargetFramework.TrimEnd(`0123456789`))' == 'net'">
@@ -53,6 +53,9 @@
   </Target>
 
   <Target Name="CopyMod" AfterTargets="Publish" Condition="'$(ScriptDir)' != ''">
+    <!-- .NET 9+ Message will only show up with -v:d or -tl:off in terminals -->
+    <Message Text="Copying mod to &quot;$(ScriptDir)&quot;" Importance="High" />
+
     <!-- https://github.com/dotnet/msbuild/issues/5881#issuecomment-1537643217 -->
     <ItemGroup>
       <FilesToCopy Include="$([MSBuild]::EnsureTrailingSlash('$(PublishDir)'))**\*.*" />
