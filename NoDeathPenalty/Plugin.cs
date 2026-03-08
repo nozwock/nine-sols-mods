@@ -1,7 +1,6 @@
 using BepInEx;
 using BepInEx.Logging;
 using HarmonyLib;
-using HarmonyLib.Tools;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -64,19 +63,23 @@ public partial class Plugin : BaseUnityPlugin
             var codes = new List<CodeInstruction>(instructions);
             for (int i = 0; i < codes.Count; i++)
             {
-                if (codes[i].opcode == OpCodes.Ldloc_1
-                    && codes[i + 1].opcode == OpCodes.Ldc_I4_0
-                    && codes[i + 2].opcode == OpCodes.Call
-                    && codes[i + 2].operand.ToString().Contains("set_CurrentGold"))
+                if (codes[i].IsLdloc()
+                    && codes[i + 1].LoadsConstant(0)
+                    && codes[i + 2].Calls(
+                        AccessTools.PropertySetter(
+                            typeof(PlayerGamePlayData),
+                            nameof(PlayerGamePlayData.CurrentGold))))
                 {
                     codes[i].opcode = OpCodes.Nop;
                     codes[i + 1].opcode = OpCodes.Nop;
                     codes[i + 2].opcode = OpCodes.Nop;
                 }
-                if (codes[i].opcode == OpCodes.Ldloc_1
-                    && codes[i + 1].opcode == OpCodes.Ldc_I4_0
-                    && codes[i + 2].opcode == OpCodes.Call
-                    && codes[i + 2].operand.ToString().Contains("set_CurrentExp"))
+                if (codes[i].IsLdloc()
+                    && codes[i + 1].LoadsConstant(0)
+                    && codes[i + 2].Calls(
+                        AccessTools.PropertySetter(
+                            typeof(PlayerGamePlayData),
+                            nameof(PlayerGamePlayData.CurrentExp))))
                 {
                     codes[i].opcode = OpCodes.Nop;
                     codes[i + 1].opcode = OpCodes.Nop;
