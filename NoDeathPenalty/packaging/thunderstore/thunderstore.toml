@@ -4,7 +4,7 @@ schemaVersion = "0.0.1"
 [package]
 namespace = "nozwock"
 name = "NoDeathPenalty"
-versionNumber = "1.0.1"
+versionNumber = "1.0.2"
 description = "Removes money and experience loss on player's death"
 websiteUrl = "https://github.com/nozwock/nine-sols-mods"
 
